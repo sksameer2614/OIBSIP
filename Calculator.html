@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <style>
+        /* CSS */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .display {
+            width: 300px;
+            height: 50px;
+            text-align: right;
+            padding: 10px;
+            font-size: 24px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            background-color: #fff;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            width: 300px;
+        }
+
+        .btn {
+            width: 23%;
+            height: 50px;
+            font-size: 18px;
+            margin: 1%;
+            box-sizing: border-box;
+            cursor: pointer;
+            background-color: #ddd;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .btn:hover {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <!-- HTML -->
+    <div id="display" class="display"></div>
+    <div class="buttons">
+        <button class="btn" id="clear">C</button>
+        <button class="btn" id="backspace">←</button>
+        <button class="btn" id="percent">%</button>
+        <button class="btn" id="equals">=</button>
+        <button class="btn">7</button>
+        <button class="btn">8</button>
+        <button class="btn">9</button>
+        <button class="btn">/</button>
+        <button class="btn">4</button>
+        <button class="btn">5</button>
+        <button class="btn">6</button>
+        <button class="btn">*</button>
+        <button class="btn">1</button>
+        <button class="btn">2</button>
+        <button class="btn">3</button>
+        <button class="btn">-</button>
+        <button class="btn">0</button>
+        <button class="btn">.</button>
+        <button class="btn">+</button>
+    </div>
+
+    <script>
+        // JavaScript
+        document.addEventListener('DOMContentLoaded', () => {
+            const display = document.getElementById('display');
+            const buttons = document.querySelectorAll('.btn');
+
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (button.id === 'clear') {
+                        display.innerText = '';
+                    } else if (button.id === 'backspace') {
+                        display.innerText = display.innerText.slice(0, -1);
+                    } else if (button.id === 'equals') {
+                        try {
+                            display.innerText = Function('"use strict";return (' + display.innerText + ')')();
+                        } catch (e) {
+                            display.innerText = 'Error';
+                        }
+                    } else if (button.id === 'percent') {
+                        try {
+                            display.innerText = Function('"use strict";return (' + display.innerText + ')')() / 100;
+                        } catch (e) {
+                            display.innerText = 'Error';
+                        }
+                    } else {
+                        display.innerText += button.innerText;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
