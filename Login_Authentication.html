@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Authentication</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffe0; /* Light yellow background for the page */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border: 2px solid #333; /* Border with 2px width */
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        a {
+            color: #007bff;
+            cursor: pointer;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .form-container {
+            display: none;
+        }
+
+        #register-form-container {
+            display: block;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-container input {
+            width: calc(100% - 30px);
+            display: inline-block;
+        }
+
+        .password-container .view-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container" id="register-form-container">
+            <h2>Register</h2>
+            <input type="text" id="register-username" placeholder="Username" required>
+            <input type="email" id="register-email" placeholder="Email" required>
+            <div class="password-container">
+                <input type="password" id="register-password" placeholder="Password" required>
+                <span class="view-password" onclick="togglePassword('register-password')">👁️</span>
+            </div>
+            <button onclick="register()">Register</button>
+            <p>Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
+        </div>
+        
+        <div class="form-container" id="login-form-container" style="display:none;">
+            <h2>Login</h2>
+            <input type="email" id="login-email" placeholder="Email" required>
+            <div class="password-container">
+                <input type="password" id="login-password" placeholder="Password" required>
+                <span class="view-password" onclick="togglePassword('login-password')">👁️</span>
+            </div>
+            <button onclick="login()">Login</button>
+            <p>Don't have an account? <a href="#" onclick="showRegister()">Register here</a></p>
+        </div>
+        
+        <div class="form-container" id="secure-page" style="display:none;">
+            <h2>Welcome to the Secured Page!</h2>
+            <div id="user-details"></div>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+    <script>
+        function showRegister() {
+            document.getElementById('register-form-container').style.display = 'block';
+            document.getElementById('login-form-container').style.display = 'none';
+            document.querySelector('.container').style.backgroundColor = '#ffffe0'; // Light yellow background
+        }
+
+        function showLogin() {
+            document.getElementById('register-form-container').style.display = 'none';
+            document.getElementById('login-form-container').style.display = 'block';
+            document.querySelector('.container').style.backgroundColor = '#ccf2ff'; // Light blue background
+        }
+
+        function register() {
+            const username = document.getElementById('register-username').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            const usernameRegex = /^[a-zA-Z0-9_]+$/;
+            const passwordRegex = /^.{8,}$/;
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|outlook\.com|hotmail\.com)$/;
+
+            if (!usernameRegex.test(username)) {
+                alert('Username should contain only alphanumeric characters and underscores (_).');
+                return;
+            }
+
+            if (!passwordRegex.test(password)) {
+                alert('Password should be at least 8 characters long.');
+                return;
+            }
+
+            if (!emailRegex.test(email)) {
+                alert('Email should be a valid Gmail, Outlook, or Hotmail address.');
+                return;
+            }
+
+            localStorage.setItem('user', JSON.stringify({ username, email, password }));
+            alert('Registration successful! Please login.');
+            showLogin();
+        }
+
+        function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            const user = JSON.parse(localStorage.getItem('user'));
+
+            if (user && user.email === email && user.password === password) {
+                alert('Login successful!');
+                showSecurePage(user);
+            } else {
+                alert('Invalid email or password.');
+            }
+        }
+
+        function showSecurePage(user) {
+            document.getElementById('login-form-container').style.display = 'none';
+            document.getElementById('register-form-container').style.display = 'none';
+            document.getElementById('secure-page').style.display = 'block';
+            document.querySelector('.container').style.backgroundColor = '#e0ffff'; // Light cyan background
+
+            const userDetails = `
+                <p><strong>Username:</strong> ${user.username}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>Password:</strong> ${user.password}</p>
+            `;
+            document.getElementById('user-details').innerHTML = userDetails;
+        }
+
+        function logout() {
+            document.getElementById('secure-page').style.display = 'none';
+            showLogin();
+        }
+
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+        }
+    </script>
+</body>
+</html>
